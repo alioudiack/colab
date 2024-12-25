@@ -45,8 +45,8 @@ def predict():
                 else:
                     data[var] = 1 if data[var] == "OUI" else 0
         column_names = list(X.columns)
-        input_features = [data.get(col, 0) for col in column_names]
-        input_array = np.array(input_features).reshape(1, -1)
+        input_values = list(data.values())
+        input_array = np.array(input_values).reshape(1, -1)
         prediction = model.predict(input_array)
         return jsonify({"prediction": int(prediction[0])})
     except Exception as e:
