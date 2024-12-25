@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire Dynamique</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, select, button {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulaire Dynamique</h1>
+    <form id="dynamicForm">
+        <!-- Les champs seront ajoutés ici par JavaScript -->
+    </form>
+
+    <script>
+        const columns = [
+            { name: "AGE", type: "number" },
+            { name: "SEXE", type: "select", options: ["Homme", "Femme"] },
+            { name: "Premiers Signe - Admission à l'hopital", type: "number" },
+            { name: "Admission à l'hopital - Prise en charge medicale", type: "number" },
+            { name: "Hypertension Arterielle", type: "select", options: ["OUI", "NON"] },
+            { name: "Diabete", type: "select", options: ["OUI", "NON"] },
+            { name: "Cardiopathie", type: "select", options: ["OUI", "NON"] },
+            { name: "hémiplégie", type: "select", options: ["OUI", "NON"] },
+            { name: "Paralysie faciale", type: "select", options: ["OUI", "NON"] },
+            { name: "Aphasie", type: "select", options: ["OUI", "NON"] },
+            { name: "Hémiparésie", type: "select", options: ["OUI", "NON"] },
+            { name: "Engagement Cerebral", type: "select", options: ["OUI", "NON"] },
+            { name: "Inondation Ventriculaire", type: "select", options: ["OUI", "NON"] },
+            { name: "Traitement", type: "select", options: ["Thrombolyse", "Chirurgie"] },
+            { name: "Temps de Suivi après traitement (en jours)", type: "number" },
+        ];
+
+        const form = document.getElementById("dynamicForm");
+
+        columns.forEach(column => {
+            const label = document.createElement("label");
+            label.textContent = column.name + " :";
+            form.appendChild(label);
+
+            if (column.type === "select") {
+                const select = document.createElement("select");
+                column.options.forEach(option => {
+                    const opt = document.createElement("option");
+                    opt.value = option;
+                    opt.textContent = option;
+                    select.appendChild(opt);
+                });
+                form.appendChild(select);
+            } else {
+                const input = document.createElement("input");
+                input.type = column.type;
+                input.name = column.name;
+                form.appendChild(input);
+            }
+        });
+
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.textContent = "Soumettre";
+        form.appendChild(submitButton);
+        document.getElementById('dynamicForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Empêche le rechargement de la page
+
+            // Préparer les données à envoyer
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            try {
+                // Envoyer une requête POST au backend
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                // Lire la réponse du serveur
+                const result = await response.json();
+                if (result.prediction===1 || result.prediction===0) {
+                    window.location.href = `resultat.html?prediction=${result.prediction}`;
+                } else {
+                    alert('Erreur : Aucun résultat de prédiction reçu.');
+                }
+            } catch (error) {
+                alert('Erreur lors de la communication avec le serveur.');
+            }
+        });
+    </script>
+</body>
+</html>

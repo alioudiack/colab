@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultat de la Prédiction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #007BFF;
+        }
+        p {
+            font-size: 1.5em;
+        }
+        .vivant {
+            color: green;
+        }
+        .decede {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Résultat de la Prédiction</h1>
+    <p id="predictionResult">Chargement du résultat...</p>
+
+    <script>
+        // Récupérer la prédiction depuis les paramètres de l'URL
+        const params = new URLSearchParams(window.location.search);
+        const prediction = params.get('prediction');
+
+        // Afficher un message en fonction du résultat
+        const resultElement = document.getElementById('predictionResult');
+        if (prediction === '1') {
+            resultElement.textContent = "Le patient est vivant.";
+            resultElement.classList.add('vivant');
+        } else if (prediction === '0') {
+            resultElement.textContent = "Le patient est décédé.";
+            resultElement.classList.add('decede');
+        } else {
+            resultElement.textContent = "Résultat inconnu. Veuillez réessayer.";
+        }
+    </script>
+</body>
+</html>
